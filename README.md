@@ -72,6 +72,9 @@ faiss-cpu,
 
 🛡️ Features
 Strict Grounding: The AI only answers based on the uploaded document.
+
 Page Citations: Every answer includes the exact page number from the PDF.
+
 High Speed: Utilizes Groq’s LPU for near-instant inference speeds.
+
 Safe Handling: Uses Streamlit Secrets for API key protection.
