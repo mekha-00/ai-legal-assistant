@@ -16,7 +16,7 @@ from langchain_community.vectorstores import FAISS
 st.set_page_config(page_title="AI Legal Document Assistant")
 
 st.title("⚖️ AI Legal Document Assistant")
-st.write("Upload a legal PDF and ask questions with citation-based answers.")
+st.write("Upload a legal PDF and ask questions.")
 
 # -----------------------------
 # API Key
