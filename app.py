@@ -16,13 +16,14 @@ from langchain_community.vectorstores import FAISS
 st.set_page_config(page_title="AI Legal Document Assistant")
 
 st.title("⚖️ AI Legal Document Assistant")
-st.write("Upload a legal PDF and ask questions.")
+st.write("Upload a legal PDF and ask questions with citation-based answers.")
 
 # -----------------------------
 # API Key
 # -----------------------------
 
-api_key = os.getenv("GROQ_API_KEY")
+api_key = st.secrets.get("GROQ_API_KEY")
+
 
 if not api_key:
     st.error("API key not found. Set GROQ_API_KEY environment variable.")
@@ -83,7 +84,7 @@ if uploaded_file:
     if vector_db is None:
         st.stop()
 
-    retriever = vector_db.as_retriever(search_kwargs={"k": 5})
+    retriever = vector_db.as_retriever(search_kwargs={"k": 3})
 
     st.success("Document processed. You can ask questions now.")
 
@@ -102,7 +103,7 @@ if uploaded_file:
             for doc in docs
         ])
 
-        # 🔥 STRICT PROMPT (NO HALLUCINATION)
+        # 🔥 EXACT PROMPT (DEEPER EXPLANATION)
         prompt = f"""
 You are a legal document assistant.
 
@@ -111,6 +112,21 @@ STRICT RULES:
 - DO NOT use outside knowledge
 - If answer is not in the document, say: "Not found in the document"
 - Always include page numbers in your answer
+
+EXPLANATION REQUIREMENTS:
+- Provide a detailed explanation in simple language (minimum 2–4 sentences)
+- Break down complex legal text into clear meaning
+- Explain what it means and why it is important
+- Do NOT copy text as explanation
+- The explanation must be based ONLY on the provided context
+
+FORMAT:
+
+Answer:
+<Detailed explanation (2–4 sentences, simple and clear)>
+
+Supporting Evidence:
+- (Page X): <relevant extracted text>
 
 Context:
 {context}
@@ -123,31 +139,16 @@ Question:
         # GROQ API CALL
         # -----------------------------
 
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        with st.spinner("Analyzing document..."):
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}]
+            )
 
-        answer = response.choices[0].message.content
+            answer = response.choices[0].message.content
 
         # -----------------------------
         # Display Answer
         # -----------------------------
-
-        st.subheader("Answer")
-        st.write(answer)
-
-        # -----------------------------
-        # Display Sources
-        # -----------------------------
-
-        st.subheader("Sources")
-
-        shown_pages = set()
-
-        for doc in docs:
-            page = doc.metadata.get("page")
-
-            if page not in shown_pages:
-                st.write(f"Page {page + 1}")
-                shown_pages.add(page)
+        
+        st.markdown(answer)
