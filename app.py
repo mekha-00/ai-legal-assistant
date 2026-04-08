@@ -141,7 +141,7 @@ Question:
 
         with st.spinner("Analyzing document..."):
             response = client.chat.completions.create(
-                model="model="llama3-70b-8192",
+                model="llama3-70b-8192",
                 messages=[{"role": "user", "content": prompt}]
             )
 
