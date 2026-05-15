@@ -4,7 +4,7 @@ An intelligent Q&A system designed to analyze legal PDFs and provide citation-ba
 
 🚀 Live Demo
 
-Click here to view the Live App (https://ai-legal-assistant-qm.streamlit.app/)
+Click here to view the Live App (https://miniproject-k8.streamlit.app/)
 
 🛠️ System Methodology (RAG Workflow)
 
